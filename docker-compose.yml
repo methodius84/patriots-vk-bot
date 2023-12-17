@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: docker/php/
+      dockerfile: Dockerfile
+      # убрать и тут и в докерфайле
+      args:
+          user: bot
+          uid: 1000
+    image: patriots-vk-bot
+    container_name: app
+    working_dir: /var/www/patriots-vk-bot
+    volumes:
+      - ./:/var/www/patriots-vk-bot
+    networks:
+      - internal
+    restart: unless-stopped
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+        - ./:/var/www/patriots-vk-bot
+        - ./docker/nginx/:/etc/nginx/conf.d
+    ports:
+      - "8000:80"
+    networks:
+      - internal
+    depends_on:
+        - app
+    restart: unless-stopped
+networks:
+  internal:
+    driver: bridge
