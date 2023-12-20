@@ -1,10 +1,10 @@
 version: '3.8'
+volumes:
+    data:
 services:
   ngrok:
     image: ngrok/ngrok:latest
     restart: unless-stopped
-    environment:
-        NGROK_AUTHTOKEN: ${NGROK_TOKEN}
     command:
         - "start"
         - "dev"
@@ -43,8 +43,29 @@ services:
     networks:
       - internal
     depends_on:
-        - app
+      - app
     restart: unless-stopped
+  db:
+    image: mysql:8.0
+    container_name: patriots_bot_db
+    ports:
+        - "3306:3306"
+    volumes:
+        - data:/var/lib/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+        MYSQL_DATABASE: ${DB_DATABASE}
+        MYSQL_USER: ${DB_USERNAME}
+        MYSQL_PASSWORD: ${DB_PASSWORD}
+    networks:
+        - internal
+  cache:
+    image: redis:latest
+    container_name: redis
+    ports:
+        - "6379:6379"
+    networks:
+        - internal
 networks:
   internal:
     driver: bridge
