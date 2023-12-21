@@ -37,7 +37,7 @@ return [
         'api_version' => '5.199',
         'secret_key' => env('VK_SECRET_KEY'),
         'service_key' => env('VK_SERVICE_KEY'),
-        'group_token' => env('VK_GROUP_TOKEN'),
+        'access_token' => env('VK_GROUP_TOKEN'),
     ],
 
 ];
