@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\VkApiDto\UserDto;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -16,16 +17,16 @@ class VkApp
         ]);
 
     }
-    public function send(string $method, array $params = []): string {
+    public function send(string $method, array $params = []): array {
         $params['access_token'] = config('services.vk.access_token');
         $params['v'] = config('services.vk.api_version');
 
         try {
             $response = $this->client->get($method . http_build_query($params));
-            $data = json_decode($response->getBody()->getContents());
+            $data = json_decode($response->getBody()->getContents(), true);
             return $data['response'];
         } catch (GuzzleException $e) {
-            return 'false';
+            return [];
         }
     }
 
@@ -33,5 +34,14 @@ class VkApp
     {
         // TODO : upload file method
         return '';
+    }
+
+    public function getUser(string $userId): UserDto
+    {
+        $params = [
+            'user_id' => $userId
+        ];
+        $response = $this->send('users.get', $params);
+        return UserDto::createFromResponse($response);
     }
 }
