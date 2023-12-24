@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Handlers;
 
-use App\DTO\VkCallbackDto\VkNewEventDto;
-use App\Services\Handlers\VkCallbackHandlerAbstract;
-use App\Services\Handlers\VkCallbackHandlerInterface;
+use App\DTO\VkCallbackDto\NewMessageDto;
 
 class MessageHandler extends VkCallbackHandlerAbstract
 {
     public function handle(): string
     {
-        if ($this->dto->getObject()) {
-            $payload = json_decode($this->dto->getObject()->getPayload());
+        /** @var NewMessageDto $object */
+        $object = $this->dto->getObject();
+        $message = $object->getMessage();
+        if ($message->getPayload()) {
+            $payload = json_decode($message->getPayload());
             if ($payload->command === 'start') {
                 $params = [];
-                $params['user_id'] = $this->data['peer_id'];
-                $user = $this->app->getUser($this->data['peer_id']);
+                $params['user_id'] = $this->dto->getObject();
+                $user = $this->app->getUser($message->getFromId());
+                $params['message'] = 'Привет, ' . $user->getFirstName();
 
                 $result = $this->app->send('messages.send', $params);
             }

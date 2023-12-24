@@ -7,7 +7,7 @@ class UserDto implements VkApiResponseInterface
     private int $id;
     private string $firstName;
     private string $lastName;
-    private int $isClosed;
+    private bool $isClosed;
 //    private ?string $bdate;
 //    private ?object $city;
 //    private ?object $contacts;
@@ -29,5 +29,25 @@ class UserDto implements VkApiResponseInterface
     {
         // TODO: Implement createFromResponse() method.
         return new static($responseData);
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->isClosed;
     }
 }

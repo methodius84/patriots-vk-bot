@@ -24,6 +24,9 @@ class VkApp
         try {
             $response = $this->client->get($method . http_build_query($params));
             $data = json_decode($response->getBody()->getContents(), true);
+            if (!is_array($data)) {
+                $data = [];
+            }
             return $data['response'];
         } catch (GuzzleException $e) {
             return [];
