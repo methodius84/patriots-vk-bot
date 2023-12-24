@@ -15,8 +15,9 @@ class MessageHandler extends VkCallbackHandlerAbstract
             $payload = json_decode($message->getPayload());
             if ($payload->command === 'start') {
                 $params = [];
-                $params['user_id'] = $this->dto->getObject();
                 $user = $this->app->getUser($message->getFromId());
+                $params['peer_id'] = $user->getId();
+                $params['random_id'] = 0;
                 $params['message'] = 'Привет, ' . $user->getFirstName();
 
                 $result = $this->app->send('messages.send', $params);

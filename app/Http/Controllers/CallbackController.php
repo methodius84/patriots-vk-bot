@@ -28,7 +28,7 @@ class CallbackController extends Controller
             $handler = app()->make(VkCallbackHandlerAbstract::class);
             $result = $handler->handle();
         } catch (\Throwable $e) {
-            Log::channel('vk_log')->error('Error handling request', $request->post());
+            Log::channel('vk_log')->error('Error handling request: ' . $e->getMessage(), $request->post());
         }
         // temp code
         return $result ?? 'ok';

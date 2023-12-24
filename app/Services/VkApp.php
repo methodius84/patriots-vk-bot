@@ -5,9 +5,13 @@ namespace App\Services;
 use App\DTO\VkApiDto\UserDto;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 class VkApp
 {
+    private const KEY_ERROR = 'error';
+    private const KEY_RESPONSE = 'response';
     private Client $client;
 
     public function __construct()
@@ -22,13 +26,10 @@ class VkApp
         $params['v'] = config('services.vk.api_version');
 
         try {
-            $response = $this->client->get($method . http_build_query($params));
-            $data = json_decode($response->getBody()->getContents(), true);
-            if (!is_array($data)) {
-                $data = [];
-            }
-            return $data['response'];
+            $response = $this->client->get($method . '?' . http_build_query($params));
+            return $this->parseResponse($response);
         } catch (GuzzleException $e) {
+            Log::channel('vk_log')->error('VK API ERROR: ' . $e->getCode() . ' ' . $e->getMessage());
             return [];
         }
     }
@@ -46,5 +47,32 @@ class VkApp
         ];
         $response = $this->send('users.get', $params);
         return UserDto::createFromResponse($response);
+    }
+
+    private function parseResponse(ResponseInterface $response)
+    {
+        $body = $response->getBody()->getContents();
+        $decodedBody = $this->decodeBody($body);
+
+        if (isset($decodedBody['error'])) {
+            $error = $decodedBody['error'];
+            // TODO throw new vk_api_error
+        }
+
+        if (isset($decodedBody['response'])) {
+            return $decodedBody['response'];
+        }
+
+        return $decodedBody;
+    }
+
+    private function decodeBody(string $body): array
+    {
+        $decodedBody = json_decode($body, true);
+
+        if (!is_array($decodedBody)) {
+            $decodedBody = [];
+        }
+        return $decodedBody;
     }
 }
