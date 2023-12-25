@@ -16,7 +16,7 @@ class MessageEventDto implements VkObjectDtoInterface
         $this->peerId = $data['peer_id'];
         $this->eventId = $data['event_id'];
         $this->payload = $data['payload'];
-        $this->conversationMessageId = $data['conversation_message_id'];
+        $this->conversationMessageId = $data['conversation_message_id'] ?? null;
     }
 
     public static function createFromArray(array $data): static
@@ -37,5 +37,10 @@ class MessageEventDto implements VkObjectDtoInterface
     public function getEventId(): string
     {
         return $this->eventId;
+    }
+
+    public function getPayload(): mixed
+    {
+        return $this->payload;
     }
 }
