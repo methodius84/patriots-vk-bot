@@ -4,5 +4,5 @@ namespace App\DTO\VkApiDto;
 
 interface VkApiResponseInterface
 {
-    public static function createFromResponse(array $responseData): static;
+    public static function createFromResponse(mixed $responseData): static;
 }

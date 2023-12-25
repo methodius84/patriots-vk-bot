@@ -2,6 +2,8 @@
 
 namespace App\DTO\VkCallbackDto;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+
 class VkNewEventDto implements VkDtoInterface
 {
     private int $groupId;
@@ -11,24 +13,27 @@ class VkNewEventDto implements VkDtoInterface
     private VkObjectDtoInterface $object;
     private string $secret;
 
-    public function __construct(array $data, VkObjectDtoInterface $object)
+    /**
+     * @throws BindingResolutionException
+     */
+    public function __construct(array $data)
     {
         $this->groupId = $data['group_id'];
         $this->type = $data['type'];
         $this->eventId = $data['event_id'];
         $this->apiVersion = $data['v'];
-        $this->object = $object;
+//        $this->object = match ($data['type']) {
+//            'message_new' => NewMessageDto::createFromArray($data['object']),
+//            'message_event' => MessageEventDto::createFromArray($data['object']),
+////            'wall_reply_new' => NewReplyDto::createFromArray($data['object']),
+//        };
+        $this->object = app()->make(VkObjectDtoInterface::class);
         $this->secret = $data['secret'];
     }
 
     public static function createFromRequest(array $data): static
     {
-        $object = match ($data['type']) {
-            'message_new' => NewMessageDto::createFromArray($data['object']),
-            'message_event' => MessageEventDto::createFromArray($data['object']),
-//            'wall_reply_new' => NewReplyDto::createFromArray($data['object']),
-        };
-        return new static($data, $object);
+        return new static($data);
     }
 
     public function getApiVersion(): string

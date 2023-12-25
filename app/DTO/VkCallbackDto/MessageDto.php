@@ -2,6 +2,8 @@
 
 namespace App\DTO\VkCallbackDto;
 
+use Illuminate\Support\Facades\Log;
+
 class MessageDto
 {
 
@@ -36,7 +38,7 @@ class MessageDto
         $this->important = $data['important'];
         $this->isHidden = $data['is_hidden'];
         $this->peerId = $data['peer_id'];
-        $this->payload = $data['payload'] ?? [];
+        $this->payload = isset($data['payload']) ? json_decode($data['payload'], true): [];
         $this->randomId = $data['random_id'];
         $this->text = $data['text'];
     }

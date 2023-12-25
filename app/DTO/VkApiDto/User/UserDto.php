@@ -1,6 +1,8 @@
 <?php
 
-namespace App\DTO\VkApiDto;
+namespace App\DTO\VkApiDto\User;
+
+use App\DTO\VkApiDto\VkApiResponseInterface;
 
 class UserDto implements VkApiResponseInterface
 {
@@ -25,9 +27,12 @@ class UserDto implements VkApiResponseInterface
         // TODO add other fields
     }
 
-    public static function createFromResponse(array $responseData): static
+    /**
+     * @param array $responseData
+     * @return static
+     */
+    public static function createFromResponse(mixed $responseData): static
     {
-        // TODO: Implement createFromResponse() method.
         return new static($responseData);
     }
 

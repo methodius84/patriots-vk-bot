@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\DTO\VkApiDto\UserDto;
+use App\DTO\VkApiDto\User\UserDto;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
@@ -19,9 +19,8 @@ class VkApp
         $this->client = new Client([
             'base_uri' => config('services.vk.api_url')
         ]);
-
     }
-    public function send(string $method, array $params = []): array {
+    public function send(string $method, array $params = []): mixed {
         $params['access_token'] = config('services.vk.access_token');
         $params['v'] = config('services.vk.api_version');
 
@@ -38,15 +37,6 @@ class VkApp
     {
         // TODO : upload file method
         return '';
-    }
-
-    public function getUser(string $userId): UserDto
-    {
-        $params = [
-            'user_id' => $userId
-        ];
-        $response = $this->send('users.get', $params);
-        return UserDto::createFromResponse($response);
     }
 
     private function parseResponse(ResponseInterface $response)
