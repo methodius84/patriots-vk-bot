@@ -2,6 +2,7 @@
 
 namespace App\Services\Handlers;
 
+use App\DTO\VkApiDto\Message\SendMessageDto;
 use App\DTO\VkApiDto\User\UserDto;
 use App\DTO\VkCallbackDto\MessageDto;
 use App\DTO\VkCallbackDto\NewMessageDto;
@@ -17,6 +18,8 @@ class MessageHandler extends VkCallbackHandlerAbstract
     private const COMMAND_PARTNERSHIP = 'partnership';
     private const COMMAND_CONTACTS = 'contacts';
     private const COMMAND_CREATOR = 'creator';
+    private const EMAIL = 'patriotsmsk@gmail.com';
+    private const PHONE = '+79670932938';
     public function handle(): string
     {
         /** @var NewMessageDto $object */
@@ -34,13 +37,18 @@ class MessageHandler extends VkCallbackHandlerAbstract
                     break;
                 case static::COMMAND_CLUB_INFO:
                     $this->clubInfo($user);
+                    break;
                 case static::COMMAND_CONTACTS:
-                    // TODO call method contacts
+                    $this->contacts($message);
                     break;
                 case static::COMMAND_TOURNAMENTS:
                     // TODO call method tournaments
                     break;
                 case static::COMMAND_PARTNERSHIP:
+                    // toDO contact with partnership q
+                    break;
+                case static::COMMAND_CREATOR:
+                    //TODO contact with creator
                     break;
             }
             if ($payload['command'] === 'application') {
@@ -77,7 +85,12 @@ EOT;
         }
     }
 
-    private function start(UserDto $user)
+    private function sendAnswer(array $params): SendMessageDto
+    {
+        return (new Message($this->app))->sendMessage($params);
+    }
+
+    private function start(UserDto $user): void
     {
         $params = [];
         $params['peer_id'] = $user->getId();
@@ -88,11 +101,11 @@ EOT;
 
         $params['message'] = 'Смотри, что я умею!';
         // main menu
-        $params['keyboard'] = json_encode(config('menu.main_menu'));
+        $params['keyboard'] = $this->encodedKeyboard('main_menu');
         $result = (new Message($this->app))->sendMessage($params);
     }
 
-    private function info(MessageDto $message)
+    private function info(MessageDto $message): void
     {
         $params = [];
         $params['peer_id'] = $message->getFromId();
@@ -103,7 +116,7 @@ EOT;
         $result = (new Message($this->app))->sendMessage($params);
     }
 
-    private function clubInfo(UserDto $user)
+    private function clubInfo(UserDto $user): void
     {
         $params = [];
         $params['peer_id'] = $user->getId();
@@ -115,5 +128,38 @@ $firstName, клуб Московские Патриоты - 14 кратный �
 EOT;
         $params['keyboard'] = $this->encodedKeyboard('info');
         (new Message($this->app))->sendMessage($params);
+    }
+
+    private function contacts(MessageDto $message): void
+    {
+        $params = [];
+        $params['peer_id'] = $message->getFromId();
+        $params['random_id'] = 0;
+        $email = static::EMAIL;
+        $phone = static::PHONE;
+        $params['message'] = <<<EOT
+Контакты для связи:
+
+Почта клуба: $email
+Телефон для связи(Telegram/WhatsApp): $phone
+EOT;
+        $params['keyboard'] = $this->encodedKeyboard('info');
+        (new Message($this->app))->sendMessage($params);
+    }
+
+    private function tournaments(MessageDto $message): void
+    {
+        $params = [];
+        $params['peer_id'] = $message->getFromId();
+        $params['random_id'] = 0;
+        // TODO text + keyboard
+        $params['message'] = '';
+        $params['keyboard'] = $this->encodedKeyboard('info');
+        (new Message($this->app))->sendMessage($params);
+    }
+
+    private function partnership(MessageDto $message): void
+    {
+
     }
 }

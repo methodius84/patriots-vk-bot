@@ -3,8 +3,6 @@
 namespace App\Services\Actions;
 
 use App\DTO\VkApiDto\Message\SendMessageDto;
-use App\DTO\VkCallbackDto\MessageEventDto;
-use App\Services\Actions\ActionInterface;
 use App\Services\VkApp;
 use Illuminate\Support\Facades\Log;
 
