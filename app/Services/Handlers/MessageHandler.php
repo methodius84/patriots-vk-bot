@@ -16,10 +16,10 @@ class MessageHandler extends VkCallbackHandlerAbstract
     private const COMMAND_CLUB_INFO = 'club_info';
     private const COMMAND_TOURNAMENTS = 'current_tournaments';
     private const COMMAND_PARTNERSHIP = 'partnership';
+    private const COMMAND_SPONSORSHIP = 'sponsorship';
+    private const COMMAND_BARTER = 'barter';
     private const COMMAND_CONTACTS = 'contacts';
     private const COMMAND_CREATOR = 'creator';
-    private const EMAIL = 'patriotsmsk@gmail.com';
-    private const PHONE = '+79670932938';
     public function handle(): string
     {
         /** @var NewMessageDto $object */
@@ -42,10 +42,16 @@ class MessageHandler extends VkCallbackHandlerAbstract
                     $this->contacts($message);
                     break;
                 case static::COMMAND_TOURNAMENTS:
-                    // TODO call method tournaments
+                    $this->tournaments($message);
                     break;
                 case static::COMMAND_PARTNERSHIP:
-                    // toDO contact with partnership q
+                    $this->partnership($message, $user);
+                    break;
+                case static::COMMAND_SPONSORSHIP:
+                    $this->sponsorship($message, $user);
+                    break;
+                case static::COMMAND_BARTER:
+                    $this->barter($message, $user);
                     break;
                 case static::COMMAND_CREATOR:
                     //TODO contact with creator
@@ -61,24 +67,25 @@ $firstName, заявку можно оставить по ссылке: https://
 
 Ждем твою заявку!
 EOT;
-                $result = (new Message($this->app))->sendMessage($params);
+                $result = $this->sendAnswer($params);
                 return 'ok';
             }
             return 'ok';
         } else {
+            // todo: переделать в норм обработчик текста
             if ($message->getText() === 'Начать') {
                 $params = [];
                 $params['peer_id'] = $message->getFromId();
                 $params['random_id'] = 0;
                 $params['message'] = $message->getText();
                 $params['keyboard'] = $this->encodedKeyboard('main_menu');
-                $result = (new Message($this->app))->sendMessage($params);
+                $result = $this->sendAnswer($params);
             } else {
                 $params = [];
                 $params['peer_id'] = $message->getFromId();
                 $params['random_id'] = 0;
                 $params['message'] = $message->getText();
-                $result = (new Message($this->app))->sendMessage($params);
+                $result = $this->sendAnswer($params);
             }
 
             return 'ok';
@@ -102,7 +109,7 @@ EOT;
         $params['message'] = 'Смотри, что я умею!';
         // main menu
         $params['keyboard'] = $this->encodedKeyboard('main_menu');
-        $result = (new Message($this->app))->sendMessage($params);
+        $result = $this->sendAnswer($params);
     }
 
     private function info(MessageDto $message): void
@@ -113,7 +120,7 @@ EOT;
         $params['message'] = static::MENU_MESSAGE_TEXT['info'];
         // about menu
         $params['keyboard'] = $this->encodedKeyboard('info');
-        $result = (new Message($this->app))->sendMessage($params);
+        $result = $this->sendAnswer($params);
     }
 
     private function clubInfo(UserDto $user): void
@@ -127,7 +134,7 @@ $firstName, клуб Московские Патриоты - 14 кратный �
 Команда существует с 3 октября 2001 года.
 EOT;
         $params['keyboard'] = $this->encodedKeyboard('info');
-        (new Message($this->app))->sendMessage($params);
+        $this->sendAnswer($params);
     }
 
     private function contacts(MessageDto $message): void
@@ -135,8 +142,8 @@ EOT;
         $params = [];
         $params['peer_id'] = $message->getFromId();
         $params['random_id'] = 0;
-        $email = static::EMAIL;
-        $phone = static::PHONE;
+        $email = config('services.patriots.email');
+        $phone = config('services.patriots.phone');
         $params['message'] = <<<EOT
 Контакты для связи:
 
@@ -144,7 +151,7 @@ EOT;
 Телефон для связи(Telegram/WhatsApp): $phone
 EOT;
         $params['keyboard'] = $this->encodedKeyboard('info');
-        (new Message($this->app))->sendMessage($params);
+        $this->sendAnswer($params);
     }
 
     private function tournaments(MessageDto $message): void
@@ -153,13 +160,60 @@ EOT;
         $params['peer_id'] = $message->getFromId();
         $params['random_id'] = 0;
         // TODO text + keyboard
-        $params['message'] = '';
+        $params['message'] = <<<EOT
+На текущий момент команда участвует в турнирах:
+
+Восточно-Европейская Суперлига. Сайт чемпионата: https://eesl.pro
+EOT;
         $params['keyboard'] = $this->encodedKeyboard('info');
-        (new Message($this->app))->sendMessage($params);
+        $this->sendAnswer($params);
     }
 
-    private function partnership(MessageDto $message): void
+    private function partnership(MessageDto $message, UserDto $user): void
     {
+        $params = [];
+        $params['peer_id'] = $message->getFromId();
+        $params['random_id'] = 0;
+        $firstName = $user->getFirstName();
 
+        $params['message'] = <<<EOT
+$firstName, Мы рассматриваем любые предложения о сотрудничестве: спонсорство, бартер
+
+Какой вариант Вас интересует?
+EOT;
+        $params['keyboard'] = $this->encodedKeyboard('partnership');
+        $this->sendAnswer($params);
+    }
+
+    private function sponsorship(MessageDto $message, UserDto $user): void
+    {
+        $params = [];
+        $params['peer_id'] = $message->getFromId();
+        $params['random_id'] = 0;
+        $firstName = $user->getFirstName();
+        $email = config('services.patriots.email');
+
+        $params['message'] = <<<EOT
+$firstName, мы рады выслушать Ваше спонсорское предложение.
+Для продолжения диалога просим направить презентацию предложения на нашу почту: $email
+EOT;
+        $params['keyboard'] = $this->encodedKeyboard('info');
+        $this->sendAnswer($params);
+    }
+
+    private function barter(MessageDto $message, UserDto $user): void
+    {
+        $params = [];
+        $params['peer_id'] = $message->getFromId();
+        $params['random_id'] = 0;
+        $firstName = $user->getFirstName();
+        $email = config('services.patriots.email');
+
+        $params['message'] = <<<EOT
+$firstName, мы рады сотрудничать по бартерному обмену.
+Для продолжения диалога просим направить презентацию предложения на нашу почту: $email
+EOT;
+        $params['keyboard'] = $this->encodedKeyboard('info');
+        $this->sendAnswer($params);
     }
 }

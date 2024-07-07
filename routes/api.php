@@ -20,5 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::controller(CallbackController::class)->group(function () {
-    Route::post('/', 'callbackHandler');
+    Route::post('/vk', 'callbackHandler');
 })->middleware(['vk_auth']);

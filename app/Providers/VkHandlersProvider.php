@@ -17,12 +17,13 @@ class VkHandlersProvider extends ServiceProvider
     public function register(): void
     {
         $type = request()->post('type');
+        $objectData = request()->post('object');
         switch ($type) {
             case 'message_new':
                 $this->app->bind(VkCallbackHandlerAbstract::class, function ($app) {
                     return new MessageHandler(new VkNewEventDto(request()->post()));
                 });
-                $objectData = request()->post('object');
+
                 $this->app->bind(VkObjectDtoInterface::class, function ($app) use ($objectData) {
                     return NewMessageDto::createFromArray($objectData);
                 });
@@ -31,7 +32,6 @@ class VkHandlersProvider extends ServiceProvider
                 $this->app->bind(VkCallbackHandlerAbstract::class, function ($app) {
                     return new MessageEventHandler(new VkNewEventDto(request()->post()));
                 });
-                $objectData = request()->post('object');
                 $this->app->bind(VkObjectDtoInterface::class, function ($app) use ($objectData) {
                     return MessageEventDto::createFromArray($objectData);
                 });

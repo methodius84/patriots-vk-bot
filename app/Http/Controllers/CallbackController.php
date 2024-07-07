@@ -16,7 +16,7 @@ class CallbackController extends Controller
     public function callbackHandler(VkCallbackRequest $request): string {
         Log::channel('vk_log')->debug('vk_request', $request->post());
         if ($request->post('type') === 'confirmation') {
-            return 'b4d730f3';
+            return 'e1f7bc6b';
         }
 
         try {

@@ -40,4 +40,9 @@ return [
         'access_token' => env('VK_GROUP_TOKEN'),
     ],
 
+    'patriots' => [
+        'email' => env('PATRIOTS_EMAIL'),
+        'phone' => env('PATRIOTS_CONTACT_PHONE'),
+    ],
+
 ];

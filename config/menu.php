@@ -60,13 +60,57 @@ return [
             [
                 [
                     'action' => [
+                        'type' => 'text',
+                        'payload' => json_encode(['command' => 'current_tournaments']),
+                        'label' => 'Турниры'
+                    ],
+                    'color' => 'secondary',
+                ],
+            ],
+            [
+                [
+                    'action' => [
                         'type' => 'callback',
                         'label' => 'Назад',
                         'payload' => json_encode(['command' => 'backwards', 'menu_state' => 'info'])
                     ],
                     'color' => 'secondary',
                 ]
-            ]
+            ],
         ]
+    ],
+    'partnership' => [
+        'one_time' => true,
+        'inline' => false,
+        'buttons' => [
+            [
+                [
+                    'action' => [
+                        'type' => 'text',
+                        'payload' => json_encode(['command' => 'sponsorship', 'menu_state' => 'info']),
+                        'label' => 'Спонсорство',
+                    ],
+                    'color' => 'primary',
+                ],
+                [
+                    'action' => [
+                        'type' => 'text',
+                        'payload' => json_encode(['command' => 'barter', 'menu_state' => 'info']),
+                        'label' => 'Бартер',
+                    ],
+                    'color' => 'primary',
+                ],
+            ],
+            [
+                [
+                    'action' => [
+                        'type' => 'callback',
+                        'label' => 'Назад',
+                        'payload' => json_encode(['command' => 'backwards', 'menu_state' => 'info'])
+                    ],
+                    'color' => 'secondary',
+                ]
+            ],
+        ],
     ],
 ];

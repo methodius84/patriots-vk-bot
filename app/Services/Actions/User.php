@@ -15,7 +15,6 @@ class User implements ActionInterface
             'user_id' => $userId
         ];
         $response = $this->app->send('users.get', $params);
-        if ($response)
         return UserDto::createFromResponse(array_pop($response));
     }
 }

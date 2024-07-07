@@ -48,8 +48,9 @@ class MessageEventHandler extends VkCallbackHandlerAbstract
             //TODO throw new Error
         }
         $params['keyboard'] = match ($menuState) {
+            // todo : нужно для прохода юзера в глубину бота
             'info' => $this->encodedKeyboard('main_menu'),
-            'some' => $this->encodedKeyboard('some'),
+            'partnership' => $this->encodedKeyboard('main_menu'),
             default => $this->encodedKeyboard('main_menu'),
         };
         $params['message'] = 'Назад';

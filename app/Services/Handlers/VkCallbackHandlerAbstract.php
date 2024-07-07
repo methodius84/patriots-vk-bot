@@ -7,7 +7,7 @@ use App\Services\VkApp;
 
 abstract class VkCallbackHandlerAbstract
 {
-    protected const MENU_STATES = ['main_menu', 'info'];
+    protected const MENU_STATES = ['main_menu', 'info', 'partnership'];
     protected const MENU_MESSAGE_TEXT = [
         'main_menu' => 'Главное меню',
         'info' => 'Информация о клубе',
