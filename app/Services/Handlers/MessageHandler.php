@@ -20,6 +20,7 @@ class MessageHandler extends VkCallbackHandlerAbstract
     private const COMMAND_BARTER = 'barter';
     private const COMMAND_CONTACTS = 'contacts';
     private const COMMAND_CREATOR = 'creator';
+
     public function handle(): string
     {
         /** @var NewMessageDto $object */
@@ -85,6 +86,7 @@ EOT;
                 $params['peer_id'] = $message->getFromId();
                 $params['random_id'] = 0;
                 $params['message'] = $message->getText();
+                $params['keyboard'] = $this->encodedKeyboard('main_menu');
                 $result = $this->sendAnswer($params);
             }
 
