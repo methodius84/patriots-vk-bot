@@ -106,7 +106,7 @@ EOT;
         $params['random_id'] = 0;
         $params['message'] = 'Привет, ' . $user->getFirstName();
 
-        (new Message($this->app))->sendMessage($params);
+        $this->sendAnswer($params);
 
         $params['message'] = 'Смотри, что я умею!';
         // main menu
